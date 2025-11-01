@@ -1,4 +1,3 @@
-const API_URL_LOCALHOST = "http://localhost:3000";
+import { API_URL_LOCALHOST, API_URL_IP } from '@env';
 
-
-export const API_URL = API_URL_LOCALHOST;
+export const API_URL = API_URL_IP;

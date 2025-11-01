@@ -53,12 +53,14 @@ export default function Index() {
       <View style={{ flex: 1 }}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {books.map((book) => (
-            <Pressable onPress={() =>
-              router.navigate({
-                pathname: '/pagesBook/pageBookDetails',
-                params: { id: book.id }
-              })}>
-              <DisplayBooks key={book.id} {...book} />
+            <Pressable
+              key={book.id}
+              onPress={() =>
+                router.navigate({
+                  pathname: '/pagesBook/pageBookDetails',
+                  params: { id: book.id }
+                })}>
+              <DisplayBooks  {...book} />
             </Pressable>
           ))}
         </ScrollView>
