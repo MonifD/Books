@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Button } from "react-native";
 import { Image } from "expo-image";
 import { Book } from "@/model/Books";
+import { useRouter } from "expo-router";
 
-export default function DisplayBooks(book: Book) {
+export default function DisplayBookDetails(book: Book) {
+  const router = useRouter();
+
   return (
     <View style={styles.card}>
       {book.cover ? (
@@ -16,10 +19,24 @@ export default function DisplayBooks(book: Book) {
       <View style={styles.txtInCard}>
         <Text style={styles.title}>{book.name}</Text>
         <Text style={styles.text}>Auteur : {book.author}</Text>
+        <Text style={styles.text}>Éditeur : {book.editor}</Text>
+        <Text style={styles.text}>Année : {book.year}</Text>
         <Text style={styles.text}>Thème : {book.theme}</Text>
+        <Text style={styles.text}>Note : {book.rating} / 5</Text>
         <Text style={styles.text}>
-          {book.read ? "LU" : "NON LU"}
+          Favori : {book.favorite ? "⭐ Oui" : "❌ Non"}
         </Text>
+        <Text style={styles.text}>
+          Lu : {book.read ? "✔ Oui" : "❌ Non"}
+        </Text>
+        <View style={{ marginTop: 8 }}>
+          <Button
+            title="Modifier"
+            onPress={() =>
+              router.push({ pathname: "/modals/BookModal", params: { id: book.id } })
+            }
+          />
+        </View>
       </View>
     </View>
   );

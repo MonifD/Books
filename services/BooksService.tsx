@@ -1,6 +1,5 @@
 import { Book } from "@/model/Books";
-
-const API_URL = "http://localhost:3000";
+import { API_URL } from "@/config";
 
 
 export const getBooks = async (params: Record<string, any> = {}): Promise<Book[]> => {

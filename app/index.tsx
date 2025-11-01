@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Text, ScrollView, Pressable, View, StyleSheet } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 
 import DisplayBooks from "@/component/DisplayBooks";
 import { Book } from "@/model/Books";
@@ -12,11 +14,22 @@ export default function Index() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchBooks = () => {
+    setLoading(true);
     getBooks()
       .then((data) => setBooks(data))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    fetchBooks();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchBooks();
+    }, [])
+  );
 
   if (loading) {
     return (
@@ -35,22 +48,32 @@ export default function Index() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {books.map((book) => (
-          <DisplayBooks key={book.id} {...book} />
-        ))}
-      </ScrollView>
+    <>
+      <Stack.Screen options={{ title: "Liste des Livres" }} />
+      <View style={{ flex: 1 }}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {books.map((book) => (
+            <Pressable onPress={() =>
+              router.navigate({
+                pathname: '/pagesBook/pageBookDetails',
+                params: { id: book.id }
+              })}>
+              <DisplayBooks key={book.id} {...book} />
+            </Pressable>
+          ))}
+        </ScrollView>
 
-      <Pressable
-        style={styles.fab}
-        onPress={() => router.push("./modals/addBookModal")}
-      >
-        <Ionicons name="add-circle-sharp" size={60} color="#4CAF50" />
-      </Pressable>
-    </View>
+        <Pressable
+          style={styles.fab}
+          onPress={() => router.push("./modals/BookModal")}
+        >
+          <Ionicons name="add-circle-sharp" size={60} color="#4CAF50" />
+        </Pressable>
+      </View>
+    </>
   );
 }
+
 
 const styles = StyleSheet.create({
   scrollContainer: {
