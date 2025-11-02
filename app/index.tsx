@@ -8,10 +8,8 @@ export default function Index() {
   const rootNavigationState = useRootNavigationState();
 
   useEffect(() => {
-    // On attend que la navigation soit prête avant de rediriger
-    if (!rootNavigationState?.key) return;
 
-    // Petit délai pour éviter le warning "before mounting"
+    if (!rootNavigationState?.key) return;
     const timer = setTimeout(() => {
       router.replace("/books");
     }, 50);
