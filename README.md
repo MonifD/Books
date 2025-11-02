@@ -74,7 +74,7 @@ npx expo start    # ou yarn start / pnpm start
 ## 📱 Pages et Fonctionnalités
 
 ### 📚 Page d'Accueil (Liste des Livres)
-- **Navigation** : Point d'entrée de l'application
+- **Books** : Point d'entrée de l'application
 - **Affichage** : Liste scrollable des livres avec leurs couvertures
 - **Filtrage et Tri** :
   - 🔍 Barre de recherche par titre ou auteur
