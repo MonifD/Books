@@ -218,17 +218,18 @@ export default function BookModal() {
                         />
                     </View>
                 </View>
-
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Statut</Text>
-                    <BookStatusButtons
-                        book={{ id, read, favorite } as Book}
-                        onUpdate={(updatedBook) => {
-                            setRead(updatedBook.read);
-                            setFavorite(updatedBook.favorite);
-                        }}
-                    />
-                </View>
+                {isEdit && (
+                    <View style={styles.inputGroup}>
+                        <Text style={styles.label}>Statut</Text>
+                        <BookStatusButtons
+                            book={{ id, read, favorite } as Book}
+                            onUpdate={(updatedBook) => {
+                                setRead(updatedBook.read);
+                                setFavorite(updatedBook.favorite);
+                            }}
+                        />
+                    </View>
+                )}
                 {errorMessage && (
                     <View style={styles.errorBox}>
                         <Ionicons name="alert-circle" size={20} color="white" style={{ marginRight: 8 }} />

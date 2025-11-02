@@ -11,55 +11,64 @@ export default function BooksComponent(book: Book) {
 	const [currentBook, setCurrentBook] = useState<Book>(book);
 
 	return (
-		<View style={styles.card}>
-			{currentBook.cover ? (
-				<Image source={{ uri: currentBook.cover }} style={styles.image} />
-			) : (
-				<View style={[styles.image, styles.placeholder]}>
-					<Text style={styles.placeholderText}>No Image</Text>
-				</View>
-			)}
+		<View style={styles.cardContainer}>
+			<View style={styles.card}>
 
-			<View style={styles.txtInCard}>
-				<Text style={styles.title}>{currentBook.name}</Text>
-				<Text style={styles.text}>Auteur : {currentBook.author}</Text>
-				<Text style={styles.text}>Thème : {currentBook.theme}</Text>
-				
-				<View style={styles.starsRow}>
-					{[1,2,3,4,5].map((s) => (
+
+				<View style={styles.txtInCard}>
+					<Text style={styles.title}>{currentBook.name}</Text>
+					<Text style={styles.text}>Auteur : {currentBook.author}</Text>
+					<Text style={styles.text}>Thème : {currentBook.theme}</Text>
+
+					<View style={styles.starsRow}>
+						{[1, 2, 3, 4, 5].map((s) => (
 							<TouchableOpacity key={s} style={{ marginRight: spacing.sm }} onPress={async () => {
-							try {
-								const updated = await updateBook(currentBook.id!, { rating: s });
-								setCurrentBook(updated);
-							} catch (err:any) {
-								console.error(err);
-							}
-						}}>
-							<Ionicons name={s <= (currentBook.rating || 0) ? "star" : "star-outline"} size={18} color={s <= (currentBook.rating || 0) ? colors.primary : colors.text.secondary} />
-						</TouchableOpacity>
-					))}
-					<Text style={styles.ratingText}>{currentBook.rating ?? 0}/5</Text>
+								try {
+									const updated = await updateBook(currentBook.id!, { rating: s });
+									setCurrentBook(updated);
+								} catch (err: any) {
+									console.error(err);
+								}
+							}}>
+								<Ionicons name={s <= (currentBook.rating || 0) ? "star" : "star-outline"} size={18} color={s <= (currentBook.rating || 0) ? colors.primary : colors.text.secondary} />
+							</TouchableOpacity>
+						))}
+						<Text style={styles.ratingText}>{currentBook.rating ?? 0}/5</Text>
+					</View>
 				</View>
+
+				<View style={styles.imageSection}>
+                    {currentBook.cover ? (
+                        <Image source={{ uri: currentBook.cover }} style={styles.image} />
+                    ) : (
+                        <View style={[styles.image, styles.placeholder]}>
+                            <Text style={styles.placeholderText}>No Image</Text>
+                        </View>
+                    )}
+                    {/* Boutons sous l’image */}
+                    <BookStatusButtons book={currentBook} onUpdate={setCurrentBook} />
+                </View>
+
 			</View>
-
-			<BookStatusButtons book={currentBook} onUpdate={setCurrentBook} />
-
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
+	cardContainer: {
+		width: "100%",
+	},
 	card: {
 		flexDirection: "row",
 		borderColor: "#4CAF50",
 		borderWidth: 2,
 		borderRadius: 10,
 		padding: 10,
-		marginVertical: 8,
-		width: "90%",
+		marginVertical: 6,
 		backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "space-between",
+		...shadows.sm,
 	},
 	txtInCard: {
 		flex: 1,
@@ -75,6 +84,11 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		marginBottom: 2,
 	},
+	imageSection: {
+		paddingTop: spacing.md,
+        alignItems: "center",
+        justifyContent: "center",
+    },
 	image: {
 		height: 80,
 		width: 80,
@@ -100,7 +114,7 @@ const styles = StyleSheet.create({
 		fontSize: typography.body2.fontSize,
 		color: colors.text.secondary,
 	},
-    cardActive: {
-        ...shadows.md
-    },
+	cardActive: {
+		...shadows.md
+	},
 });

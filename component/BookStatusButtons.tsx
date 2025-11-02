@@ -59,9 +59,12 @@ export default function BookStatusButtons({ book, onUpdate }: Props) {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: "column",
-        alignItems: "flex-end",
-    },
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.sm,
+    paddingTop: spacing.md,
+},
     bubble: {
         borderRadius: 50,
         paddingVertical: 6,
