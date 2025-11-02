@@ -1,13 +1,13 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator, ScrollView } from "react-native";
 import { Image } from "expo-image";
-import { Book } from "@/model/Books";
+import { Book } from "@/model/Book";
 import { useRouter } from "expo-router";
 import { deleteBook } from "@/services/BooksService";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { colors, spacing, shadows, radius, typography } from "@/styles/theme";
 
-export default function DisplayBookDetails(book: Book) {
+export default function BookDetailsComponent(book: Book) {
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -59,8 +59,8 @@ export default function DisplayBookDetails(book: Book) {
             <Ionicons name="pencil" size={20} color={colors.text.light} />
             <Text style={styles.buttonText}>Modifier</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => setModalVisible(true)}
           >

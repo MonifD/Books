@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Text, TextInput, ScrollView, View, ActivityIndicator, Pressable, StyleSheet } from "react-native";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
 import { addBook, updateBook, getBookById } from "@/services/BooksService";
-import { Book } from "@/model/Books";
+import { Book } from "@/model/Book";
 import { colors, spacing, shadows, radius, typography } from "@/styles/theme";
 import { Ionicons } from "@expo/vector-icons";
 

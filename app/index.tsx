@@ -4,10 +4,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
-import DisplayBooks from "@/component/DisplayBooks";
-import { Book } from "@/model/Books";
+import { Book } from "@/model/Book";
 import { getBooks } from "@/services/BooksService";
 import { colors, spacing, shadows, typography } from "@/styles/theme";
+import BooksComponent from "@/component/BooksComponent";
 
 export default function Index() {
   const router = useRouter();
@@ -85,7 +85,7 @@ export default function Index() {
                 { transform: [{ scale: pressed ? 0.98 : 1 }] }
               ]}
             >
-              <DisplayBooks {...book} />
+              <BooksComponent {...book} />
             </Pressable>
           ))}
         </ScrollView>

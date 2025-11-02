@@ -1,34 +1,47 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { Text, View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-import { Book } from "@/model/Books";
+import { Book } from "@/model/Book";
+import { Note } from "@/model/Note";
 import { getBookById } from "@/services/BooksService";
-import DisplayBookDetails from "@/component/DisplayBookDetails";
+import { getNotesByBookId } from "@/services/NotesService";
 import { colors, spacing, typography } from "@/styles/theme";
+import BookDetailsComponent from "@/component/BookDetailsComponent";
+import NoteBookComponent from "@/component/NotesBookComponent";
+import AddNoteComponent from "@/component/AddNoteComponent";
 
 export default function BookDetails() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const [book, setBook] = useState<Book | null>(null);
+    const [notes, setNotes] = useState<Note[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetch = () => {
-        if (id) {
-            setLoading(true);
-            getBookById(parseInt(id))
-                .then((data) => setBook(data))
-                .catch(() => setBook(null))
-                .finally(() => setLoading(false));
+    const fetchData = async () => {
+        if (!id) return;
+        setLoading(true);
+        try {
+            const [bookData, notesData] = await Promise.all([
+                getBookById(parseInt(id)),
+                getNotesByBookId(parseInt(id)),
+            ]);
+            setBook(bookData);
+            setNotes(notesData);
+        } catch {
+            setBook(null);
+            setNotes([]);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetch();
+        fetchData();
     }, [id]);
 
     useFocusEffect(
-        React.useCallback(() => {
-            fetch();
+        useCallback(() => {
+            fetchData();
         }, [id])
     );
 
@@ -47,17 +60,15 @@ export default function BookDetails() {
     if (!book) {
         return (
             <>
-                <Stack.Screen 
-                    options={{ 
+                <Stack.Screen
+                    options={{
                         title: "Livre introuvable",
-                        headerStyle: {
-                            backgroundColor: colors.surface
-                        },
-                        headerShadowVisible: false
-                    }} 
+                        headerStyle: { backgroundColor: colors.surface },
+                        headerShadowVisible: false,
+                    }}
                 />
                 <View style={styles.center}>
-                    <Text style={[styles.loadingText, { textAlign: 'center' }]}>
+                    <Text style={[styles.loadingText, { textAlign: "center" }]}>
                         Impossible de trouver le livre demandé.
                     </Text>
                 </View>
@@ -67,27 +78,37 @@ export default function BookDetails() {
 
     return (
         <>
-            <Stack.Screen 
-                options={{ 
+            <Stack.Screen
+                options={{
                     title: book.name,
-                    headerStyle: {
-                        backgroundColor: colors.surface
-                    },
+                    headerStyle: { backgroundColor: colors.surface },
                     headerShadowVisible: false,
-                    headerLargeTitle: true
-                }} 
+                    headerLargeTitle: true,
+                }}
             />
-            <View style={styles.container}>
-                <DisplayBookDetails {...book} />
-            </View>
+            <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+                <BookDetailsComponent {...book} />
+                <AddNoteComponent bookId={book.id!} onNoteAdded={fetchData} />
+                {notes.length > 0 && (
+                    <View style={styles.notesContainer}>
+                        <Text style={styles.notesTitle}>Notes :</Text>
+                        {notes.map((n) => (
+                            <NoteBookComponent key={n.id} {...n} />
+                        ))}
+                    </View>
+                )}
+            </ScrollView>
         </>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    scrollContainer: {
         flex: 1,
         backgroundColor: colors.background,
+    },
+    scrollContent: {
+        padding: spacing.md,
     },
     center: {
         flex: 1,
@@ -101,5 +122,17 @@ const styles = StyleSheet.create({
         fontWeight: "400" as const,
         color: colors.text.secondary,
         marginTop: spacing.md,
+    },
+    notesContainer: {
+        marginTop: spacing.lg,
+    },
+    notesTitle: {
+        fontWeight: "bold",
+        marginBottom: spacing.sm,
+        fontSize: typography.body1.fontSize,
+    },
+    noteText: {
+        marginBottom: spacing.xs,
+        color: colors.text.secondary,
     },
 });

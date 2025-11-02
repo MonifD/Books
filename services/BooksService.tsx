@@ -1,4 +1,4 @@
-import { Book } from "@/model/Books";
+import { Book } from "@/model/Book";
 import { API_URL } from "@/config";
 
 
