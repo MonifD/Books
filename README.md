@@ -1,51 +1,181 @@
-# Welcome to your Expo app 👋
+# 📚 Application Books
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Application mobile de gestion de bibliothèque personnelle développée avec React Native et Expo.
 
-## Get started
+## 🌟 Fonctionnalités
 
-1. Install dependencies
+### Gestion des Livres
+- ✨ Affichage de la liste des livres avec leurs détails
+- ➕ Ajout d'un nouveau livre
+- ✏️ Modification des informations d'un livre
+- 🗑️ Suppression d'un livre
+- 🔍 Recherche de livres par titre ou auteur
+- 🏷️ Filtrage par thème, statut de lecture et favoris
+- ⭐ Notation des livres (0-5 étoiles)
+- 🖼️ Support des couvertures de livres (upload d'images)
 
-   ```bash
-   npm install
-   ```
+### Statuts et Notes
+- 📖 Marquer un livre comme lu/non lu
+- ❤️ Ajouter/retirer des favoris
+- 📝 Ajouter des notes personnelles aux livres
 
-2. Start the app
+### Interface Utilisateur
+- 🌓 Thème clair/sombre avec persistance
+- 📱 Interface responsive et intuitive
+- ⚡ Navigation fluide entre les écrans
+- 🔄 Synchronisation avec l'API backend
 
-   ```bash
-   npx expo start
-   ```
+## 🛠️ Prérequis
 
-In the output, you'll find options to open the app in a
+- Node.js (v18 ou supérieur)
+- npm, yarn ou pnpm
+- Expo CLI
+- Expo Go sur votre appareil mobile ou un émulateur
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📲 Installation et Configuration
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### 1. Configuration de l'API (dossier API-BOOKS)
 
 ```bash
-npm run reset-project
+cd API-BOOKS
+
+# Installation des dépendances
+npm install   # ou yarn install / pnpm install
+
+# ⚠️ Important : Modifiez server.js pour permettre l'accès depuis le mobile
+# Remplacez la dernière ligne par :
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(\`✅ BookList API disponible sur http://[VOTRE_IP_LOCALE]:${PORT}\`)
+)
+
+# Démarrage du serveur
+npm start    # ou yarn start / pnpm start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Configuration de l'Application Mobile (dossier Books)
 
-## Learn more
+```bash
+cd Books
 
-To learn more about developing your project with Expo, look at the following resources:
+# Installation des dépendances
+npm install   # ou yarn install / pnpm install
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Installation d'AsyncStorage (requis pour la persistance du thème)
+expo install @react-native-async-storage/async-storage
 
-## Join the community
+# Configuration de l'API
+# Modifiez config.js pour pointer vers votre API :
+# API_URL: "http://[VOTRE_IP_LOCALE]:3000"
 
-Join our community of developers creating universal apps.
+# Démarrage de l'application
+npx expo start    # ou yarn start / pnpm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# Books
+## 📱 Pages et Fonctionnalités
+
+### 📚 Page d'Accueil (Liste des Livres)
+- **Navigation** : Point d'entrée de l'application
+- **Affichage** : Liste scrollable des livres avec leurs couvertures
+- **Filtrage et Tri** :
+  - 🔍 Barre de recherche par titre ou auteur
+  - 📑 Filtres par thème
+  - ⭐ Filtre des favoris
+  - 📖 Filtre des livres lus/non-lus
+- **Actions Rapides** :
+  - ➕ Bouton d'ajout d'un nouveau livre
+  - ⚙️ Accès aux paramètres (thème)
+
+### 📖 Page Détails du Livre
+- **Informations** :
+  - 🖼️ Couverture en grand format
+  - 📝 Titre, auteur, éditeur, année
+  - 🏷️ Thème du livre
+  - ⭐ Note sur 5 étoiles (modifiable)
+- **Actions** :
+  - ❤️ Ajouter/Retirer des favoris
+  - ✅ Marquer comme lu/non lu
+  - 📝 Ajouter/voir les notes
+  - ✏️ Modifier les informations
+  - 🗑️ Supprimer le livre
+
+### ➕ Modal Ajout/Modification de Livre
+- **Champs de Saisie** :
+  - 📝 Titre du livre
+  - 👤 Auteur
+  - 🏢 Éditeur
+  - 📅 Année de publication
+  - 🏷️ Thème
+- **Options** :
+  - 🖼️ Upload d'une couverture (depuis galerie ou caméra)
+  - ⭐ Attribution d'une note
+  - ❤️ Marquer comme favori
+  - ✅ Marquer comme lu
+
+### 📝 Section Notes
+- **Affichage** : Liste chronologique des notes
+- **Actions** :
+  - ➕ Ajouter une nouvelle note
+  - 🗑️ Supprimer une note existante
+- **Format** : Texte enrichi avec date de création
+
+### ⚙️ Page Paramètres
+- **Thème** :
+  - 🌞 Mode clair
+  - 🌙 Mode sombre
+  - 🔄 Switch pour basculer
+  - 💾 Sauvegarde automatique du choix
+
+## 💡 Guide d'Utilisation
+
+1. Scannez le QR code avec Expo Go (Android) ou l'app Camera (iOS)
+2. La page d'accueil affiche la liste des livres
+3. Pour ajouter un livre :
+   - Appuyez sur le bouton ➕
+   - Remplissez les informations requises
+   - Optionnellement, ajoutez une couverture
+   - Validez pour sauvegarder
+4. Pour gérer un livre existant :
+   - Appuyez sur sa carte pour voir les détails
+   - Utilisez les boutons d'action pour :
+     - ❤️ Mettre en favori
+     - ✅ Marquer comme lu
+     - ⭐ Noter le livre
+     - ✏️ Modifier les informations
+     - 🗑️ Supprimer
+5. Pour changer le thème :
+   - Appuyez sur l'icône ⚙️
+   - Utilisez le switch pour basculer entre clair et sombre
+
+## 🎨 Personnalisation du Thème
+
+L'application supporte deux thèmes :
+- 🌞 Thème clair (par défaut)
+- 🌙 Thème sombre
+
+Pour changer de thème :
+1. Accédez aux paramètres (icône ⚙️)
+2. Utilisez le switch pour basculer entre les thèmes
+3. Le choix est automatiquement sauvegardé
+
+## 🔧 Structure du Projet
+
+```
+Books/
+├── app/                  # Pages principales et navigation
+├── components/          # Composants réutilisables
+├── context/            # Contexte React (ThemeContext)
+├── model/              # Types et interfaces
+├── services/           # Services API
+└── styles/            # Thèmes et styles globaux
+```
+
+## 📦 API Endpoints
+
+- GET /books : Liste tous les livres
+- POST /books : Ajoute un nouveau livre
+- PUT /books/:id : Met à jour un livre
+- DELETE /books/:id : Supprime un livre
+- GET /books/:id/notes : Récupère les notes d'un livre
+- POST /books/:id/notes : Ajoute une note à un livre
+- POST /upload : Upload d'image de couverture
+
