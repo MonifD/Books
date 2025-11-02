@@ -5,15 +5,16 @@ import { useRouter } from "expo-router";
 import { deleteBook } from "@/services/BooksService";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { colors, spacing, radius, typography } from "@/styles/theme";
+import { colors, spacing, radius, typography, shadows } from "@/styles/theme";
 import BookStatusButtons from "./BookStatusButtons";
+import { updateBook } from "@/services/BooksService";
 
 export default function BookDetailsComponent(book: Book) {
     const router = useRouter();
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [currentBook, setCurrentBook] = useState<Book>(book);
-
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleDelete = async () => {
         try {
@@ -22,7 +23,7 @@ export default function BookDetailsComponent(book: Book) {
             router.back();
         } catch (error: any) {
             console.error(error);
-            alert(error.message || "Erreur lors de la suppression.");
+            setErrorMessage(error.message || "Erreur lors de la suppression.");
         } finally {
             setLoading(false);
         }
@@ -30,6 +31,12 @@ export default function BookDetailsComponent(book: Book) {
 
     return (
         <View style={styles.card}>
+            {errorMessage && (
+                <View style={styles.errorBox}>
+                    <Ionicons name="alert-circle" size={20} color="white" style={{ marginRight: 8 }} />
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                </View>
+            )}
             {book.cover ? (
                 <Image source={{ uri: book.cover }} style={styles.image} />
             ) : (
@@ -44,7 +51,24 @@ export default function BookDetailsComponent(book: Book) {
                 <Text style={styles.text}>Éditeur : {book.editor}</Text>
                 <Text style={styles.text}>Année : {book.year}</Text>
                 <Text style={styles.text}>Thème : {book.theme}</Text>
-                <Text style={styles.text}>Note : {book.rating} / 5</Text>
+                <Text style={styles.text}>Note : {currentBook.rating} / 5</Text>
+
+                <View style={styles.starsRow}>
+                    {[1, 2, 3, 4, 5].map((s) => (
+                        <TouchableOpacity key={s} style={{ marginRight: spacing.sm }} onPress={async () => {
+                            try {
+                                const updated = await updateBook(currentBook.id!, { rating: s });
+                                setCurrentBook(updated);
+                            } catch (err: any) {
+                                console.error(err);
+                            }
+                        }}>
+                            <Ionicons name={s <= (currentBook.rating || 0) ? "star" : "star-outline"} size={20} color={s <= (currentBook.rating || 0) ? colors.primary : colors.text.secondary} />
+                        </TouchableOpacity>
+                    ))}
+                    <Text style={styles.ratingText}>{currentBook.rating ?? 0}/5</Text>
+                </View>
+
                 <BookStatusButtons book={currentBook} onUpdate={setCurrentBook} />
                 <View style={{ marginTop: 8 }}>
                     <TouchableOpacity
@@ -53,7 +77,7 @@ export default function BookDetailsComponent(book: Book) {
                             router.push({ pathname: "/modals/BookModal", params: { id: book.id } })
                         }
                     >
-                        <Ionicons name="pencil" size={20} color={colors.text.light} />
+                        <Ionicons name="pencil" size={20} color={colors.text.light} style={{ marginRight: spacing.xs }} />
                         <Text style={styles.buttonText}>Modifier</Text>
                     </TouchableOpacity>
 
@@ -61,7 +85,7 @@ export default function BookDetailsComponent(book: Book) {
                         style={styles.deleteButton}
                         onPress={() => setModalVisible(true)}
                     >
-                        <Ionicons name="trash" size={20} color={colors.text.light} />
+                        <Ionicons name="trash" size={20} color={colors.text.light} style={{ marginRight: spacing.xs }} />
                         <Text style={styles.buttonText}>Supprimer</Text>
                     </TouchableOpacity>
                 </View>
@@ -81,7 +105,7 @@ export default function BookDetailsComponent(book: Book) {
 
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
-                                style={[styles.button, styles.cancelButton]}
+                                style={[styles.button, styles.cancelButton, { marginRight: spacing.md }]}
                                 onPress={() => setModalVisible(false)}
                                 disabled={loading}
                             >
@@ -105,6 +129,21 @@ export default function BookDetailsComponent(book: Book) {
     );
 }
 const styles = StyleSheet.create({
+    errorBox: {
+        backgroundColor: "#E74C3C",
+        borderRadius: radius.md,
+        padding: spacing.sm,
+        marginBottom: spacing.md,
+        flexDirection: "row",
+        alignItems: "center",
+        ...shadows.sm,
+    },
+    errorText: {
+        color: "white",
+        flex: 1,
+        fontSize: typography.body2.fontSize,
+        fontWeight: "500",
+    },
     card: {
         backgroundColor: colors.surface,
         borderRadius: radius.lg,
@@ -157,7 +196,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         marginTop: spacing.lg,
-        gap: spacing.md,
     },
     editButton: {
         flex: 1,
@@ -168,7 +206,7 @@ const styles = StyleSheet.create({
         borderRadius: radius.md,
         alignItems: "center",
         justifyContent: "center",
-        gap: spacing.xs,
+
     },
     deleteButton: {
         flex: 1,
@@ -179,7 +217,7 @@ const styles = StyleSheet.create({
         borderRadius: radius.md,
         alignItems: "center",
         justifyContent: "center",
-        gap: spacing.xs,
+
     },
 
     /* Modal styles */
@@ -214,7 +252,6 @@ const styles = StyleSheet.create({
     },
     modalButtons: {
         flexDirection: "row",
-        gap: spacing.md,
     },
     button: {
         flex: 1,
@@ -231,5 +268,15 @@ const styles = StyleSheet.create({
         lineHeight: typography.body2.lineHeight,
         fontWeight: "600" as const,
         color: colors.text.light,
+    },
+    starsRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: spacing.xs,
+    },
+    ratingText: {
+        marginLeft: spacing.sm,
+        fontSize: typography.body2.fontSize,
+        color: colors.text.secondary,
     },
 });

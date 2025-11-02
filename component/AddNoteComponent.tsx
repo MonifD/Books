@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Alert } from "react-native";
+import { View, TextInput, Button, StyleSheet, Text } from "react-native";
 import { addNoteToBook } from "@/services/NotesService";
-import { colors, spacing } from "@/styles/theme";
+import { colors, spacing, shadows, radius, typography } from "@/styles/theme";
+import { Ionicons } from "@expo/vector-icons";
+
 
 interface AddNoteProps {
     bookId: number;
@@ -12,9 +14,11 @@ export default function AddNoteComponent({ bookId, onNoteAdded }: AddNoteProps) 
     const [noteText, setNoteText] = useState("");
     const [loading, setLoading] = useState(false);
 
+        const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    
     const handleAddNote = async () => {
         if (!noteText.trim()) {
-            Alert.alert("Erreur", "Veuillez entrer une note avant de valider.");
+            setErrorMessage("Erreur Veuillez entrer une note avant de valider.");
             return;
         }
 
@@ -24,7 +28,7 @@ export default function AddNoteComponent({ bookId, onNoteAdded }: AddNoteProps) 
             setNoteText("");
             onNoteAdded?.();
         } catch (error: any) {
-            Alert.alert("Erreur", error.message || "Impossible d’ajouter la note");
+            setErrorMessage(error.message || "Impossible d’ajouter la note");
         } finally {
             setLoading(false);
         }
@@ -32,6 +36,12 @@ export default function AddNoteComponent({ bookId, onNoteAdded }: AddNoteProps) 
 
     return (
         <View style={styles.container}>
+            {errorMessage && (
+                    <View style={styles.errorBox}>
+                        <Ionicons name="alert-circle" size={20} color="white" style={{ marginRight: 8 }} />
+                        <Text style={styles.errorText}>{errorMessage}</Text>
+                    </View>
+                )}
             <TextInput
                 value={noteText}
                 onChangeText={setNoteText}
@@ -66,5 +76,20 @@ const styles = StyleSheet.create({
         fontSize: 15,
         textAlignVertical: "top",
         marginBottom: spacing.sm,
+    },
+    errorBox: {
+        backgroundColor: "#E74C3C",
+        borderRadius: radius.md,
+        padding: spacing.sm,
+        marginBottom: spacing.md,
+        flexDirection: "row",
+        alignItems: "center",
+        ...shadows.sm,
+    },
+    errorText: {
+        color: "white",
+        flex: 1,
+        fontSize: typography.body2.fontSize,
+        fontWeight: "500",
     },
 });

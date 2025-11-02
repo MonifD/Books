@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View, TouchableOpacity, Text, Alert } from "react-native";
+import { spacing } from "@/styles/theme";
 import { Ionicons } from "@expo/vector-icons";
 import { Book } from "@/model/Book";
 import { updateBook } from "@/services/BooksService";
@@ -60,7 +61,6 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: "column",
         alignItems: "flex-end",
-        gap: 10,
     },
     bubble: {
         borderRadius: 50,
@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         minWidth: 70,
+        marginBottom: spacing.sm,
     },
     bubbleText: {
         color: "#fff",

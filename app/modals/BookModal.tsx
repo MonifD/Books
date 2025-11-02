@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Text, TextInput, ScrollView, View, ActivityIndicator, Pressable, StyleSheet } from "react-native";
+import { Text, TextInput, ScrollView, View, ActivityIndicator, Pressable, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { Stack, useRouter, useLocalSearchParams } from "expo-router";
 import { addBook, updateBook, getBookById } from "@/services/BooksService";
 import { Book } from "@/model/Book";
 import { colors, spacing, shadows, radius, typography } from "@/styles/theme";
 import BookStatusButtons from "@/component/BookStatusButtons";
+import { Image } from 'expo-image';
+import * as ImagePicker from 'expo-image-picker';
+import { Ionicons } from "@expo/vector-icons";
 
 export default function BookModal() {
     const { id: idParam } = useLocalSearchParams<{ id?: string }>();
@@ -24,6 +27,8 @@ export default function BookModal() {
 
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
 
     useEffect(() => {
         let mounted = true;
@@ -42,7 +47,7 @@ export default function BookModal() {
                     setCover(b.cover ?? "");
                     setTheme(b.theme ?? "");
                 })
-                .catch((err: any) => alert(err.message || "Impossible de charger le livre"))
+                .catch((err: any) => setErrorMessage(err.message || "Impossible de charger le livre"))
                 .finally(() => setLoading(false));
         }
         return () => {
@@ -83,9 +88,33 @@ export default function BookModal() {
             }
             router.back();
         } catch (err: any) {
-            alert(err?.message || "Erreur lors de l'envoi");
+            setErrorMessage("Impossible d'envoyer le formulaire. " + (err?.message || ""));
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const setImage = async () => {
+        try {
+            const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (!permission.granted) {
+                setErrorMessage('Permission requise Autorisez l\'accès à la galerie pour sélectionner une image.');
+                return;
+            }
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 0.7,
+                aspect: [3, 4]
+            });
+            if (!result.canceled && result.assets && result.assets.length > 0) {
+                setCover(result.assets[0].uri ?? "");
+            } else if (!result.canceled && (result as any).uri) {
+                setCover((result as any).uri);
+            }
+        } catch (err: any) {
+            console.error(err);
+            setErrorMessage('Erreur Impossible de sélectionner l\'image.');
         }
     };
 
@@ -144,14 +173,24 @@ export default function BookModal() {
                         style={styles.input}
                         placeholderTextColor={colors.text.secondary}
                     />
-                    <TextInput
-                        placeholder="Note (0-5)"
-                        value={rating}
-                        onChangeText={setRating}
-                        keyboardType="numeric"
-                        style={styles.input}
-                        placeholderTextColor={colors.text.secondary}
-                    />
+                    <Text style={styles.label}>Note</Text>
+                    <View style={styles.starsRow}>
+                        {[1, 2, 3, 4, 5].map((s) => (
+                            <TouchableOpacity
+                                key={s}
+                                style={{ marginRight: spacing.sm }}
+                                onPress={() => setRating(String(s))}
+                            >
+                                <Ionicons
+                                    name={s <= Number(rating) ? "star" : "star-outline"}
+                                    size={24}
+                                    color={s <= Number(rating) ? colors.primary : colors.text.secondary}
+                                />
+                            </TouchableOpacity>
+                        ))}
+                        <Text style={styles.ratingText}>{rating || 0}/5</Text>
+                    </View>
+
                     <TextInput
                         placeholder="Thème"
                         value={theme}
@@ -163,13 +202,21 @@ export default function BookModal() {
 
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Image</Text>
-                    <TextInput
-                        placeholder="URL de la couverture"
-                        value={cover}
-                        onChangeText={setCover}
-                        style={styles.input}
-                        placeholderTextColor={colors.text.secondary}
-                    />
+                    {cover ? (
+                        <Image source={{ uri: cover }} style={{ width: '100%', height: 180, borderRadius: radius.md, marginBottom: spacing.sm }} />
+                    ) : null}
+                    <View style={{ flexDirection: 'row' }}>
+                        <Pressable onPress={setImage} style={[styles.input, { flex: 1, justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.md, marginRight: spacing.sm }]}>
+                            <Text style={{ color: colors.text.primary }}>Sélectionner une image</Text>
+                        </Pressable>
+                        <TextInput
+                            placeholder="URL de la couverture"
+                            value={cover}
+                            onChangeText={setCover}
+                            style={[styles.input, { flex: 1 }]}
+                            placeholderTextColor={colors.text.secondary}
+                        />
+                    </View>
                 </View>
 
                 <View style={styles.inputGroup}>
@@ -182,6 +229,12 @@ export default function BookModal() {
                         }}
                     />
                 </View>
+                {errorMessage && (
+                    <View style={styles.errorBox}>
+                        <Ionicons name="alert-circle" size={20} color="white" style={{ marginRight: 8 }} />
+                        <Text style={styles.errorText}>{errorMessage}</Text>
+                    </View>
+                )}
 
                 <Pressable
                     style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
@@ -204,6 +257,21 @@ const styles = StyleSheet.create({
     },
     form: {
         padding: spacing.md,
+    },
+    errorBox: {
+        backgroundColor: "#E74C3C",
+        borderRadius: radius.md,
+        padding: spacing.sm,
+        marginBottom: spacing.md,
+        flexDirection: "row",
+        alignItems: "center",
+        ...shadows.sm,
+    },
+    errorText: {
+        color: "white",
+        flex: 1,
+        fontSize: typography.body2.fontSize,
+        fontWeight: "500",
     },
     inputGroup: {
         marginBottom: spacing.lg,
@@ -253,5 +321,16 @@ const styles = StyleSheet.create({
         fontWeight: "400" as const,
         color: colors.text.secondary,
         marginTop: spacing.md,
+    },
+    starsRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: spacing.sm,
+    },
+    ratingText: {
+        marginLeft: spacing.sm,
+        fontSize: typography.body1.fontSize,
+        color: colors.text.primary,
+        fontWeight: "500",
     },
 });
