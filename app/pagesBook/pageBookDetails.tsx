@@ -10,6 +10,7 @@ import { colors, spacing, typography } from "@/styles/theme";
 import BookDetailsComponent from "@/component/BookDetailsComponent";
 import NoteBookComponent from "@/component/NotesBookComponent";
 import AddNoteComponent from "@/component/AddNoteComponent";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function BookDetails() {
     const { id } = useLocalSearchParams<{ id: string }>();
@@ -88,15 +89,21 @@ export default function BookDetails() {
             />
             <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
                 <BookDetailsComponent {...book} />
-                <AddNoteComponent bookId={book.id!} onNoteAdded={fetchData} />
-                {notes.length > 0 && (
+                {notes.length > 0 ? (
                     <View style={styles.notesContainer}>
                         <Text style={styles.notesTitle}>Notes :</Text>
                         {notes.map((n) => (
                             <NoteBookComponent key={n.id} {...n} />
                         ))}
                     </View>
+                ) : (
+                    <View style={styles.noNotesContainer}>
+                        <Ionicons name="chatbubble-ellipses-outline" size={48} color={colors.text.secondary} />
+                        <Text style={styles.noNotesText}>Aucune note pour ce livre</Text>
+                    </View>
                 )}
+                <AddNoteComponent bookId={book.id!} onNoteAdded={fetchData} />
+
             </ScrollView>
         </>
     );
@@ -133,6 +140,21 @@ const styles = StyleSheet.create({
     },
     noteText: {
         marginBottom: spacing.xs,
+        color: colors.text.secondary,
+    },
+    noNotesContainer: {
+        marginTop: spacing.lg,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: spacing.md,
+        borderWidth: 1,
+        borderColor: colors.border,
+        borderRadius: 8,
+        backgroundColor: colors.surface,
+    },
+    noNotesText: {
+        marginTop: spacing.sm,
+        fontSize: typography.body1.fontSize,
         color: colors.text.secondary,
     },
 });

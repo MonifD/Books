@@ -57,18 +57,18 @@ export default function Index() {
 
   return (
     <>
-      <Stack.Screen 
-        options={{ 
+      <Stack.Screen
+        options={{
           title: "Bibliothèque",
           headerStyle: {
             backgroundColor: colors.surface,
           },
           headerShadowVisible: false,
           headerLargeTitle: true
-        }} 
+        }}
       />
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContainer}
           showsVerticalScrollIndicator={false}
         >
