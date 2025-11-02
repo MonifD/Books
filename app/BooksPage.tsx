@@ -37,6 +37,11 @@ export default function BooksPage() {
       fetchBooks();
     }, [])
   );
+  const handleUpdateBook = (updatedBook: Book) => {
+    setBooks(prev =>
+      prev.map(b => (b.id === updatedBook.id ? updatedBook : b))
+    );
+  };
 
   const filtered = useMemo(() => {
     let list = books.slice();
@@ -231,7 +236,8 @@ export default function BooksPage() {
               onPress={() => router.navigate({ pathname: '/BookDetailsPage', params: { id: book.id } })}
               style={({ pressed }) => [{ opacity: pressed ? 0.7 : 1 }, { transform: [{ scale: pressed ? 0.98 : 1 }] }]}
             >
-              <BooksComponent {...book} />
+              <BooksComponent {...book} onUpdate={handleUpdateBook} />
+
             </Pressable>
           ))}
         </ScrollView>
