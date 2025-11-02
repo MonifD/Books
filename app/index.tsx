@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, ScrollView, Pressable, View, StyleSheet } from "react-native";
-
+import { Text, ScrollView, Pressable, View, StyleSheet, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
@@ -8,6 +7,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import DisplayBooks from "@/component/DisplayBooks";
 import { Book } from "@/model/Books";
 import { getBooks } from "@/services/BooksService";
+import { colors, spacing, shadows, typography } from "@/styles/theme";
 
 export default function Index() {
   const router = useRouter();
@@ -34,7 +34,8 @@ export default function Index() {
   if (loading) {
     return (
       <View style={styles.center}>
-        <Text>Loading...</Text>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.statusText}>Chargement...</Text>
       </View>
     );
   }
@@ -42,16 +43,35 @@ export default function Index() {
   if (books.length === 0) {
     return (
       <View style={styles.center}>
-        <Text>Aucun livre disponible.</Text>
+        <Ionicons name="book-outline" size={64} color={colors.text.secondary} />
+        <Text style={styles.statusText}>Aucun livre disponible</Text>
+        <Pressable
+          style={styles.addButton}
+          onPress={() => router.push("./modals/BookModal")}
+        >
+          <Text style={styles.addButtonText}>Ajouter un livre</Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
     <>
-      <Stack.Screen options={{ title: "Liste des Livres" }} />
-      <View style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <Stack.Screen 
+        options={{ 
+          title: "Bibliothèque",
+          headerStyle: {
+            backgroundColor: colors.surface,
+          },
+          headerShadowVisible: false,
+          headerLargeTitle: true
+        }} 
+      />
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
           {books.map((book) => (
             <Pressable
               key={book.id}
@@ -59,17 +79,25 @@ export default function Index() {
                 router.navigate({
                   pathname: '/pagesBook/pageBookDetails',
                   params: { id: book.id }
-                })}>
-              <DisplayBooks  {...book} />
+                })}
+              style={({ pressed }) => [
+                { opacity: pressed ? 0.7 : 1 },
+                { transform: [{ scale: pressed ? 0.98 : 1 }] }
+              ]}
+            >
+              <DisplayBooks {...book} />
             </Pressable>
           ))}
         </ScrollView>
 
         <Pressable
-          style={styles.fab}
+          style={({ pressed }) => [
+            styles.fab,
+            { transform: [{ scale: pressed ? 0.95 : 1 }] }
+          ]}
           onPress={() => router.push("./modals/BookModal")}
         >
-          <Ionicons name="add-circle-sharp" size={60} color="#4CAF50" />
+          <Ionicons name="add" size={32} color={colors.text.light} />
         </Pressable>
       </View>
     </>
@@ -79,17 +107,46 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   scrollContainer: {
-    alignItems: "center",
-    paddingVertical: 10,
+    padding: spacing.md,
+    paddingBottom: spacing.xxl * 2,
   },
   fab: {
     position: "absolute",
-    bottom: 30,
-    right: 30,
+    bottom: spacing.xl,
+    right: spacing.xl,
+    backgroundColor: colors.primary,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    ...shadows.lg
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    padding: spacing.xl,
   },
+  statusText: {
+    fontSize: typography.body1.fontSize,
+    lineHeight: typography.body1.lineHeight,
+    fontWeight: "400",
+    color: colors.text.secondary,
+    marginTop: spacing.md,
+    textAlign: 'center'
+  },
+  addButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    borderRadius: 100,
+    marginTop: spacing.xl,
+    ...shadows.sm
+  },
+  addButtonText: {
+    ...typography.body1,
+    color: colors.text.light,
+    fontWeight: "600"
+  }
 });

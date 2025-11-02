@@ -1,9 +1,11 @@
-import { StyleSheet, Text, View, Button, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ActivityIndicator } from "react-native";
 import { Image } from "expo-image";
 import { Book } from "@/model/Books";
 import { useRouter } from "expo-router";
 import { deleteBook } from "@/services/BooksService";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { colors, spacing, shadows, radius, typography } from "@/styles/theme";
 
 export default function DisplayBookDetails(book: Book) {
   const router = useRouter();
@@ -15,7 +17,7 @@ export default function DisplayBookDetails(book: Book) {
     try {
       await deleteBook(book.id!);
       setModalVisible(false);
-      router.back(); // retourne à la page précédente
+      router.back();
     } catch (error: any) {
       console.error(error);
       alert(error.message || "Erreur lors de la suppression.");
@@ -48,14 +50,23 @@ export default function DisplayBookDetails(book: Book) {
           Lu : {book.read ? "✔ Oui" : "❌ Non"}
         </Text>
         <View style={{ marginTop: 8 }}>
-          <Button
-            title="Modifier"
+          <TouchableOpacity
+            style={styles.editButton}
             onPress={() =>
               router.push({ pathname: "/modals/BookModal", params: { id: book.id } })
             }
-          />
-          <Button title="Supprimer" color="red" onPress={() => setModalVisible(true)} />
-
+          >
+            <Ionicons name="pencil" size={20} color={colors.text.light} />
+            <Text style={styles.buttonText}>Modifier</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.deleteButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Ionicons name="trash" size={20} color={colors.text.light} />
+            <Text style={styles.buttonText}>Supprimer</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <Modal
@@ -98,48 +109,80 @@ export default function DisplayBookDetails(book: Book) {
 }
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row",
-    borderColor: "#4CAF50",
-    borderWidth: 2,
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 8,
-    width: "90%",
-    backgroundColor: "#fff",
-    alignItems: "center",
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    margin: spacing.md,
   },
   txtInCard: {
     flex: 1,
-    marginLeft: 10,
+    marginTop: spacing.md,
   },
   title: {
-    fontWeight: "bold",
-    fontSize: 16,
-    marginBottom: 4,
+    fontSize: typography.h2.fontSize,
+    lineHeight: typography.h2.lineHeight,
+    fontWeight: "700" as const,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
   text: {
-    fontSize: 14,
-    marginBottom: 2,
+    fontSize: typography.body1.fontSize,
+    lineHeight: typography.body1.lineHeight,
+    fontWeight: "400" as const,
+    color: colors.text.secondary,
+    marginBottom: spacing.xs,
   },
   image: {
-    height: 80,
-    width: 80,
-    borderRadius: 8,
-    backgroundColor: "#eee",
+    height: 200,
+    width: "100%",
+    borderRadius: radius.md,
+    backgroundColor: colors.border,
   },
   placeholder: {
     justifyContent: "center",
     alignItems: "center",
+    height: 200,
+    backgroundColor: colors.border,
+    borderRadius: radius.md,
   },
   placeholderText: {
-    fontSize: 10,
-    color: "#999",
-    textAlign: "center",
+    fontSize: typography.caption.fontSize,
+    lineHeight: typography.caption.lineHeight,
+    fontWeight: "400" as const,
+    color: colors.text.secondary,
   },
   center: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: spacing.lg,
+    gap: spacing.md,
+  },
+  editButton: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
+  },
+  deleteButton: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: colors.error,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.md,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: spacing.xs,
   },
 
   /* Modal styles */
@@ -150,40 +193,46 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "80%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-    alignItems: "center",
+    width: "90%",
+    maxWidth: 400,
+    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    padding: spacing.xl,
   },
   modalTitle: {
-    fontWeight: "bold",
-    fontSize: 18,
-    marginBottom: 12,
+    fontSize: typography.h3.fontSize,
+    lineHeight: typography.h3.lineHeight,
+    fontWeight: "600" as const,
+    color: colors.text.primary,
+    marginBottom: spacing.md,
+    textAlign: "center",
   },
   modalText: {
-    fontSize: 14,
-    marginBottom: 20,
+    fontSize: typography.body1.fontSize,
+    lineHeight: typography.body1.lineHeight,
+    fontWeight: "400" as const,
+    color: colors.text.secondary,
+    marginBottom: spacing.lg,
     textAlign: "center",
   },
   modalButtons: {
     flexDirection: "row",
-    gap: 10,
+    gap: spacing.md,
   },
   button: {
     flex: 1,
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingVertical: spacing.md,
+    borderRadius: radius.md,
     alignItems: "center",
+    justifyContent: "center",
   },
   cancelButton: {
-    backgroundColor: "#ccc",
-  },
-  deleteButton: {
-    backgroundColor: "red",
+    backgroundColor: colors.border,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
+    fontSize: typography.body2.fontSize,
+    lineHeight: typography.body2.lineHeight,
+    fontWeight: "600" as const,
+    color: colors.text.light,
   },
 });
