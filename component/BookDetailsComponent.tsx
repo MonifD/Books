@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, Modal, TouchableOpacity, ViewStyle, TextStyle, ImageStyle } from "react-native";
 import { Image } from "expo-image";
 import { Book } from "@/model/Book";
 import { useRouter } from "expo-router";
@@ -30,7 +30,7 @@ export default function BookDetailsComponent(book: Book) {
     };
 
     return (
-        <View style={styles.card}>
+        <View style={styles.card as ViewStyle}>
             {errorMessage && (
                 <View style={styles.errorBox}>
                     <Ionicons name="alert-circle" size={20} color="white" style={{ marginRight: 8 }} />
@@ -129,14 +129,39 @@ export default function BookDetailsComponent(book: Book) {
     );
 }
 
-const styles = StyleSheet.create({
+type Styles = {
+  card: ViewStyle;
+  errorBox: ViewStyle;
+  errorText: TextStyle;
+  image: ImageStyle;
+  placeholder: ViewStyle;
+  placeholderText: TextStyle;
+  txtInCard: ViewStyle;
+  title: TextStyle;
+  text: TextStyle;
+  starsRow: ViewStyle;
+  ratingText: TextStyle;
+  editButton: ViewStyle;
+  deleteButton: ViewStyle;
+  buttonText: TextStyle;
+  modalOverlay: ViewStyle;
+  modalContent: ViewStyle;
+  modalTitle: TextStyle;
+  modalText: TextStyle;
+  modalButtons: ViewStyle;
+  button: ViewStyle;
+  cancelButton: ViewStyle;
+};
+
+const styles = StyleSheet.create<Styles>({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radius.lg,
-    padding: spacing.lg,
+    padding: 0,
     margin: spacing.md,
-    ...shadows.md,
-  },
+    ...shadows.lg,
+    overflow: 'hidden',
+  } as ViewStyle,
   errorBox: {
     flexDirection: "row",
     alignItems: "center",
@@ -145,36 +170,41 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     marginBottom: spacing.md,
     ...shadows.sm,
-  },
+  } as ViewStyle,
   errorText: {
     color: colors.text.light,
     fontSize: typography.body2.fontSize,
     fontWeight: "500",
     flex: 1,
-  },
+  } as const,
   image: {
     width: "100%",
-    height: 220,
-    borderRadius: radius.md,
-    backgroundColor: colors.border,
-    marginBottom: spacing.md,
-  },
+    height: 300,
+    backgroundColor: colors.surfaceAlt,
+  } as ImageStyle,
   placeholder: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: colors.border,
-  },
+    backgroundColor: colors.surfaceAlt,
+    height: 300,
+  } as ViewStyle,
   placeholderText: {
-    color: colors.text.secondary,
+    color: colors.text.disabled,
     fontSize: typography.caption.fontSize,
-  },
+    lineHeight: typography.caption.lineHeight,
+    fontWeight: "400",
+  } as TextStyle,
   txtInCard: {
-    marginTop: spacing.md,
+    padding: spacing.lg,
+    backgroundColor: colors.surface,
+    borderTopLeftRadius: radius.xl,
+    borderTopRightRadius: radius.xl,
+    marginTop: -radius.xl,
   },
   title: {
     fontSize: typography.h2.fontSize,
     lineHeight: typography.h2.lineHeight,
-    fontWeight: "700",
+    fontWeight: "700" as const,
     color: colors.text.primary,
     marginBottom: spacing.sm,
   },
@@ -204,7 +234,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     marginBottom: spacing.sm,
     ...shadows.sm,
-  },
+  } as const,
   deleteButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -214,18 +244,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radius.md,
     ...shadows.sm,
-  },
+  } as const,
   buttonText: {
     color: colors.text.light,
-    fontWeight: "600",
+    fontWeight: "600" as const,
     fontSize: typography.body2.fontSize,
-  },
+  } as const,
   modalOverlay: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
-  },
+  } as const,
   modalContent: {
     width: "90%",
     maxWidth: 400,
@@ -233,33 +263,33 @@ const styles = StyleSheet.create({
     borderRadius: radius.lg,
     padding: spacing.xl,
     ...shadows.md,
-  },
+  } as const,
   modalTitle: {
     fontSize: typography.h3.fontSize,
     fontWeight: "600",
     color: colors.text.primary,
     marginBottom: spacing.md,
     textAlign: "center",
-  },
+  } as TextStyle,
   modalText: {
     fontSize: typography.body1.fontSize,
     color: colors.text.secondary,
     textAlign: "center",
     marginBottom: spacing.lg,
-  },
+  } as TextStyle,
   modalButtons: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
+  } as const,
   button: {
     flex: 1,
     paddingVertical: spacing.sm,
     borderRadius: radius.md,
     alignItems: "center",
     justifyContent: "center",
-  },
+  } as const,
   cancelButton: {
     backgroundColor: colors.border,
     marginRight: spacing.md,
-  },
+  } as const,
 });

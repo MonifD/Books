@@ -200,13 +200,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: spacing.xl,
     right: spacing.xl,
-    backgroundColor: colors.primary,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    backgroundColor: colors.accent2,
+    width: 65,
+    height: 65,
+    borderRadius: 32.5,
     justifyContent: "center",
     alignItems: "center",
-    ...shadows.lg
+    ...shadows.xl,
+    borderWidth: 3,
+    borderColor: colors.surface
   },
   center: {
     flex: 1,
@@ -242,70 +244,89 @@ const styles = StyleSheet.create({
   },
   headerControls: {
     padding: spacing.md,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+    ...shadows.sm
   },
   searchInput: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    backgroundColor: colors.background,
+    borderRadius: radius.lg,
     padding: spacing.sm,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: spacing.sm
+    borderColor: colors.borderLight,
+    marginBottom: spacing.sm,
+    fontSize: typography.body1.fontSize,
+    color: colors.text.primary,
+    ...shadows.sm
   },
   filtersRow: {
     flexDirection: 'row',
-    marginBottom: spacing.sm,
-    flexWrap: 'wrap'
+    marginBottom: spacing.md,
+    flexWrap: 'wrap',
+    paddingVertical: spacing.xs,
   },
   filterPill: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.round,
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border
+    backgroundColor: colors.surfaceAlt,
+    marginBottom: spacing.xs,
+    ...shadows.sm
   },
   filterPillSpacing: {
     marginRight: spacing.sm
   },
   filterPillActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary
+    backgroundColor: colors.secondary,
+    borderColor: colors.secondary,
+    transform: [{ scale: 1.05 }],
+    ...shadows.md
   },
   filterText: {
     color: colors.text.secondary,
+    fontWeight: '500',
+    fontSize: typography.body2.fontSize
   },
   filterTextActive: {
-    color: colors.text.light
+    color: colors.text.light,
+    fontWeight: '600'
   },
   sortRow: {
     flexDirection: 'row',
     alignItems: 'center',
-
+    backgroundColor: colors.surfaceAlt,
+    padding: spacing.sm,
+    borderRadius: radius.lg,
+    marginTop: spacing.sm
   },
   sortLabel: {
     fontSize: typography.body2.fontSize,
     lineHeight: typography.body2.lineHeight,
-    fontWeight: "400" as const,
-    color: colors.text.secondary
+    fontWeight: "600" as const,
+    color: colors.text.secondary,
+    marginRight: spacing.sm
   },
   sortPill: {
     paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.round,
     backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border
+    ...shadows.sm
   },
   sortPillActive: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary
+    backgroundColor: colors.accent1,
+    transform: [{ scale: 1.05 }],
+    ...shadows.md
   },
   sortText: {
-    color: colors.text.secondary
+    color: colors.text.secondary,
+    fontSize: typography.caption.fontSize,
+    fontWeight: '500'
   },
   sortTextActive: {
-    color: colors.text.light
+    color: colors.text.light,
+    fontWeight: '600'
   }
 });

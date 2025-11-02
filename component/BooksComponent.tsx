@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ViewStyle, TextStyle, ImageStyle } from "react-native";
 import { Image } from "expo-image";
 import { useState } from "react";
 import { Book } from "@/model/Book";
@@ -54,67 +54,99 @@ export default function BooksComponent(book: Book) {
 	);
 }
 
-const styles = StyleSheet.create({
+type Styles = {
+  cardContainer: ViewStyle;
+  card: ViewStyle;
+  txtInCard: ViewStyle;
+  title: TextStyle;
+  text: TextStyle;
+  imageSection: ViewStyle;
+  image: ImageStyle;
+  placeholder: ViewStyle;
+  placeholderText: TextStyle;
+  starsRow: ViewStyle;
+  ratingText: TextStyle;
+  cardActive: ViewStyle;
+};
+
+const styles = StyleSheet.create<Styles>({
 	cardContainer: {
 		width: "100%",
+		paddingHorizontal: spacing.sm,
+		marginBottom: spacing.md,
 	},
 	card: {
 		flexDirection: "row",
-		borderColor: "#4CAF50",
-		borderWidth: 2,
-		borderRadius: 10,
-		padding: 10,
-		marginVertical: 6,
-		backgroundColor: "#fff",
+		borderWidth: 1,
+		borderColor: colors.borderLight,
+		borderRadius: radius.lg,
+		padding: spacing.md,
+		backgroundColor: colors.surface,
 		alignItems: "center",
 		justifyContent: "space-between",
-		...shadows.sm,
+		...shadows.md,
 	},
 	txtInCard: {
 		flex: 1,
-		marginLeft: 10,
-		marginRight: 10,
+		marginRight: spacing.md,
 	},
 	title: {
-		fontWeight: "bold",
-		fontSize: 16,
-		marginBottom: 4,
+		color: colors.text.primary,
+		marginBottom: spacing.xs,
+		fontSize: typography.h3.fontSize,
+		lineHeight: typography.h3.lineHeight,
+		fontWeight: "600",
 	},
 	text: {
-		fontSize: 14,
-		marginBottom: 2,
+		color: colors.text.secondary,
+		marginBottom: spacing.xs,
+		fontSize: typography.body2.fontSize,
+		lineHeight: typography.body2.lineHeight,
+		fontWeight: "400",
 	},
 	imageSection: {
-		paddingTop: spacing.md,
-        alignItems: "center",
-        justifyContent: "center",
-    },
+		alignItems: "center",
+		justifyContent: "center",
+		width: 100,
+	},
 	image: {
-		height: 80,
+		height: 120,
 		width: 80,
-		borderRadius: 8,
-		backgroundColor: "#eee",
+		borderRadius: radius.md,
+		backgroundColor: colors.surfaceAlt,
+		marginBottom: spacing.sm,
 	},
 	placeholder: {
 		justifyContent: "center",
 		alignItems: "center",
+		backgroundColor: colors.surfaceAlt,
+		borderWidth: 1,
+		borderColor: colors.borderLight,
+		borderStyle: 'dashed',
 	},
 	placeholderText: {
-		fontSize: 10,
-		color: "#999",
-		textAlign: "center",
+		color: colors.text.disabled,
+		fontSize: typography.caption.fontSize,
+		lineHeight: typography.caption.lineHeight,
+		fontWeight: "400",
 	},
 	starsRow: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: spacing.xs,
+		marginTop: spacing.sm,
+		backgroundColor: colors.surfaceAlt,
+		padding: spacing.xs,
+		borderRadius: radius.sm,
+		alignSelf: 'flex-start',
 	},
 	ratingText: {
 		marginLeft: spacing.sm,
-		fontSize: typography.body2.fontSize,
+		...typography.body2,
 		color: colors.text.secondary,
+		fontWeight: '600',
 	},
 	cardActive: {
-		...shadows.md
+		...shadows.lg,
+		transform: [{ scale: 1.02 }],
 	},
 });
